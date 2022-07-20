@@ -1,0 +1,64 @@
+function [offset]=alignTTL(txtcal,nevfile)
+%
+%Jon Rueckemann
+
+%Read unity calibration behavior file
+Y=readcell(txtcal,'Delimiter',',');
+%Pick lines that had 'Arduino_write_string'
+%Tell NLX system something happend by using the arduino
+arduino=Y(strcmpi(Y(:,3),'ARDUINO_WRITE_STRING'),[1 4]);
+
+%Read NLX NEV file
+[evts,~,TTL,~,evtstr,~]=Nlx2MatEV(nevfile,ones(1,5),1,1,[]);
+
+%Compare LIGHTON and ENDTRIAL signals across records
+%Convert arduino (txt) to C(numeric code). 
+%C = unity text code
+C=arduino;
+%If it's anything but LIGHTON/LIGHTOFF/ENDTRIAL/SUCCESS -> turn into NaN
+C(~strcmpi(C(:,2),'LIGHTON')&~strcmpi(C(:,2),'LIGHTOFF')&...
+    ~strcmpi(C(:,2),'ENDTRIAL')&~strcmpi(C(:,2),'SUCCESS'),2)={nan};
+%LIGHTON = 32
+C(strcmpi(C(:,2),'LIGHTON'),2)={32};
+%LIGHTOFF = 0
+C(strcmpi(C(:,2),'LIGHTOFF'),2)={0};
+%ENDTRIAL or SUCCESS = 2
+C(strcmpi(C(:,2),'ENDTRIAL')|strcmpi(C(:,2),'SUCCESS'),2)={2};
+C=cell2mat(C);
+
+% D = nlx code TTL to evtstr
+D=[round(evts(:)/1000) TTL(:)]; %convert neuralynx time to milliseconds
+%Older setup -> this line didn't exist, 
+% keep=cellfun(@(x) ...
+%     contains(x,'TTL Input on AcqSystem1_0 board 0 port 3 value'),evtstr);
+% %Only truncates if new version
+% if any(keep)
+%     D=D(keep,:);
+% end
+
+% Str-compare to evtstr
+D=D(D(:,2)==32|D(:,2)==2|D(:,2)==0,:);
+
+%Find indices when LIGHTON precedes consecutive
+%hiLIGHTOFF and ENDTRIAL
+idxC=C(:,2)==32 & [C(2:end,2);0]==0 & [C(3:end,2);0;0]==2;
+idxD=D(:,2)==32 & [D(2:end,2);0]==0 & [D(3:end,2);0;0]==2;
+%Pull timestamp from unity log
+logTS=C(idxC,1);
+%Pull timestamp from nlx
+nlxTS=D(idxD,1);
+
+%Create 1kHz signals and align to find offset between nlx and log files
+logsig=zeros(1,ceil(logTS(end)-logTS(1)));
+logsig(logTS-logTS(1)+1)=1;
+nlxsig=zeros(1,ceil(nlxTS(end)-nlxTS(1)));
+nlxsig(nlxTS-nlxTS(1)+1)=1;
+d=finddelay(logsig,nlxsig); %add d 1ms steps to align log to nlx signal
+offset=d-logTS(1)+nlxTS(1); %Convert log time to nlx time
+
+% figure;
+% plot(D(:,1),D(:,2));
+% hold(gca,'on');
+% plot(C(:,1)+offset,C(:,2));
+% title(txtcal);
+end
