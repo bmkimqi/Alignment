@@ -12,7 +12,11 @@ folderlist=findfoldertoken(parentfolder,'Arnov','txt');
 err=false(size(folderlist));
 errmsg=cell(size(err));
 errID=cell(size(err));
+checktime = zeros(numel(folderlist),2);
+
 for n=1:numel(folderlist) 
+    tic;
+    
     disp(folderlist{n});
     try        
         %Find all associated behavior files
@@ -36,7 +40,8 @@ for n=1:numel(folderlist)
         assert(numel(nevfiles)==1,['Code cannot'...
             ' currently handle two sources of NLX events.']);        
         nevfile=fullfile(nevfiles.folder,nevfiles.name);
-        offset=alignTTLfromEV(calibeh,nevfile); %in milliseconds (native unity)
+        [offset, seshdur] = alignTTLfromEV(calibeh,nevfile); %in milliseconds (native unity)
+        checktime(n,2) = seshdur;
         
         %Order recordings based on file name
         txtbeh=[fbeh; ybeh];
@@ -86,7 +91,10 @@ for n=1:numel(folderlist)
         disp(folderlist{n})
         disp(ME.message)
     end
+    checktime(n,1) = toc;
+    disp(checktime)
 end
+save('checktime','checktime')
 end
 function parforsave(fname,behdata,taskrng,infostruct) 
     save(fname,'behdata','taskrng','infostruct');

@@ -1,4 +1,4 @@
-function [offset]=alignTTLfromEV(txtcal,nevfile)
+function [offset, seshdur]=alignTTLfromEV(txtcal,nevfile)
 
 
 Y=readcell(txtcal,'Delimiter',',');
@@ -45,6 +45,7 @@ nlxsig=zeros(1,ceil(nlxTS(end)-nlxTS(1)));
 nlxsig(nlxTS-nlxTS(1)+1)=1;
 d=finddelay(logsig,nlxsig); %add d 1ms steps to align log to nlx signal
 offset=d-logTS(1)+nlxTS(1);
+seshdur = nlxTS(end) - nlxTS(1);
 
 disp(d)
 disp(offset)
