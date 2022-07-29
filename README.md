@@ -5,7 +5,7 @@ Code to align NLX and Unity Data.
 
 Currently tested to work with Color/Pseudo/Arnov Tasks
 
-**Updates 07.27.2022**
+**Updates 07.28.2022**
 - saves a matfile that shows runtime and session length in nlx timestamps
 
 **Known Issues/Bugs (07.20.2022)**
