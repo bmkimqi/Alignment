@@ -5,6 +5,9 @@ Code to align NLX and Unity Data.
 
 Currently tested to work with Color/Pseudo/Arnov Tasks
 
+**Updates 07.27.2022**
+- saves a matfile that shows runtime and session length in nlx timestamps
+
 **Known Issues/Bugs (07.20.2022)**
 1. Janky fix for when NEV file is read in as a string and not a number
 2. 'MATLAB:badsubscript': 'Index in position 2 exceeds array bounds (must not exceed 8).
@@ -16,5 +19,3 @@ Currently tested to work with Color/Pseudo/Arnov Tasks
     - Seen in color game tasks, possible fix made (07.20.2022)
       - Brute forced the first value in the cell into a number rather than a string.
     - Problem with exporting from convertbehlog to [behdata(m), taskrng(m,:)]
-
-5.
