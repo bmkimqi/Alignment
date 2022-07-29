@@ -6,8 +6,8 @@ if nargin<1
     parentfolder=uigetdir;
 end
 
-%Find folders that contain txt files with "Arnov" in the title
-folderlist=findfoldertoken(parentfolder,'Arnov','txt');
+%Find folders that contain txt files with "Aronov" in the title
+folderlist=findfoldertoken(parentfolder,'Aronov','txt');
 
 err=false(size(folderlist));
 errmsg=cell(size(err));
@@ -20,7 +20,7 @@ for n=1:numel(folderlist)
     disp(folderlist{n});
     try        
         %Find all associated behavior files
-        foraglist=dir(fullfile(folderlist{n},'*Arnov*eye*.txt'));
+        foraglist=dir(fullfile(folderlist{n},'*Aronov*eye*.txt'));
         feye={foraglist.name}';
         fbeh=cellfun(@(x) replace(x,'EyeLog','Log'),feye,'uni',0);
         ymazelist=dir(fullfile(folderlist{n},'*ymaze*eye*.txt'));
@@ -56,7 +56,7 @@ for n=1:numel(folderlist)
         
         txtbeh=fullfile(folderlist{n},txtbeh);
         tasktype=repmat({'Ymaze'},size(txtbeh,1),1);
-        tasktype(1:numel(fbeh))={'Arnov'};
+        tasktype(1:numel(fbeh))={'Aronov'};
         txtbeh=txtbeh(sidx);
         tasktype=tasktype(sidx);
         

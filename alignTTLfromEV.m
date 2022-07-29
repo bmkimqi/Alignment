@@ -13,6 +13,12 @@ C(~strcmpi(C(:,2),'LIGHTON')&~strcmpi(C(:,2),'LIGHTOFF')&...
 C(strcmpi(C(:,2),'LIGHTON'),2)={32};
 C(strcmpi(C(:,2),'LIGHTOFF'),2)={0};
 C(strcmpi(C(:,2),'ENDTRIAL')|strcmpi(C(:,2),'SUCCESS'),2)={2};
+
+% Check if first value is a string 
+if ischar(C{1,1})
+    C{1,1} = cellfun(@str2num, C(1,1));
+end
+
 C=cell2mat(C);
 
 
