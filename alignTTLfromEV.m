@@ -11,6 +11,7 @@ arduino=Y(strcmpi(Y(:,3), ARDUINO_WRITE_STRING'),[1 4]);
 
 % Read NLX NEV file
 [evtts,~,TTL,~,evtstr,~]=Nlx2MatEV(nevfile,ones(1,5),1,1,[]);
+% TTL is unused because we're using event strings.
 
 % Compare LIGHTON and ENDTRIAL signals across records
 % Convert arduino (txt) to C(numeric code). 
@@ -82,4 +83,5 @@ disp(offset)
 % plot(D(:,1),D(:,2));
 % hold(gca,'on');
 % plot(C(:,1)+offset,C(:,2));
-% title(txtcal,'Interpreter','None');
+% title(txtcal,'Interpreter','None'); %No interpreter seems to fix the
+% warnings thrown.
